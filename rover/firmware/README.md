@@ -4,8 +4,7 @@ Every folder is a standalone Arduino sketch (open the `.ino` in the Arduino IDE 
 **Arduino Nano / ATmega328P** → Upload).
 
 > **Which one is the real one?** The code base went through two architectures.
-> The sketch that matches the project report and was used in the final field
-> deployment is:
+> The sketch used in the final field deployment is:
 
 > ```
 > rover_hc05_bluetooth_FINAL/        ← ✅ FINAL (used in deployment)
@@ -17,7 +16,7 @@ Every folder is a standalone Arduino sketch (open the `.ino` in the Arduino IDE 
 
 | Sketch | Status | Comms link | Notes |
 |---|---|---|---|
-| **`rover_hc05_bluetooth_FINAL/`** | ✅ **FINAL** | HC‑05 @ HW UART D0/D1, 9600 | Full rover: sensor loop + telemetry + motor & parachute‑servo commands. Matches report §4.1 & appendix code. |
+| **`rover_hc05_bluetooth_FINAL/`** | ✅ **FINAL** | HC‑05 @ HW UART D0/D1, 9600 | Full rover: sensor loop + telemetry + motor & parachute‑servo commands. |
 | `xbee_rover_enddevice_swserial/` | earlier | XBee @ SW serial D2/RX D3/TX | Rover as XBee end‑device; telemetry forwarded over radio. |
 | `xbee_rover_enddevice_hwserial/` | earlier | XBee @ HW UART | Rover variant; NaN‑safe `sendSensorData()`. |
 | `xbee_ground_coordinator/` | earlier | XBee @ SW serial D2/RX D3/TX | Ground‑station coordinator: parses telemetry frame, forwards typed commands. |
@@ -61,12 +60,12 @@ Commands (single ASCII character in `handleCommand()`):
 
 | Char | Effect |
 |---|---|
-| `F` / `L` / `R` | drive states (differential) |
+| `F` | forward — both motors driven in the same direction |
+| `B` | backward — both motors driven in the opposite direction |
+| `L` | turn left on the spot (left wheel reversed, right wheel forward) |
+| `R` | turn right on the spot (left wheel forward, right wheel reversed) |
 | `S` | motors stop + parachute servo → 0° |
 | `U` | parachute servo → 90° (**release the parachute**) |
-
-> ⚠️ See the “naming caveat” in the main README §A.5 — Serial labels in
-> `handleCommand()` drifted across revisions; trust the code, not the labels.
 
 ## Reverting to a different sensor combo
 

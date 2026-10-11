@@ -296,19 +296,20 @@ Equipment rental and the test site were free. (The XBee was later swapped for th
 ├── LICENSE                    MIT licence
 ├── data/
 │   └── launch_day/            Full telemetry log recorded on launch day (.xlsx, 1517 samples / ≈ 120 s)
+├── media/                     ← photos and videos (rover and aircraft in one place)
+│   ├── photos/
+│   └── videos/
 ├── rover/                     ← the two-wheeled Rover
 │   ├── firmware/              Arduino code: final Bluetooth firmware + XBee-era rover / ground-station code
 │   │   ├── rover_hc05_bluetooth_FINAL/     ✅ final firmware used in the field deployment
 │   │   ├── xbee_rover_enddevice_*/         ⚙️ early XBee rover end devices
 │   │   ├── xbee_ground_coordinator*/       ⚙️ early XBee ground stations
 │   │   └── component_tests/                🧪 single-part tests for BMP280 / DPS310 / LM35DZ / MPU6050
-│   ├── cad/fusion360_components/           Fusion 360 reference models of the individual parts
-│   └── media/                 Photos and videos: assembly / bench tests / field deployment
+│   └── cad/fusion360_components/           Fusion 360 reference models of the individual parts
 └── fixed_wing_aircraft/       ← the fixed-wing carrier aircraft
     ├── cad_models/            Airframe CAD / structural drawings
     ├── docs/                  Wiring, channel maps and other documents
-    ├── firmware_flight_controller/   Flight-controller firmware and tuning configuration
-    └── media/                 Photos and videos
+    └── firmware_flight_controller/   Flight-controller firmware and tuning configuration
 ```
 
 ## 4. Getting started (running the Rover)

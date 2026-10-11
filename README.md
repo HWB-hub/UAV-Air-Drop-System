@@ -286,19 +286,20 @@ T:<°C>,P:<hPa>,AX:<g>,AY:<g>,AZ:<g>,GX:<°/s>,GY:<°/s>,GZ:<°/s>,MPU Temp:<°C
 ├── LICENSE                    MIT 许可证
 ├── data/
 │   └── launch_day/            发射当天的完整遥测日志（.xlsx，1517 条样本 / 约 120 s）
+├── media/                     ← 照片与视频（卫星车和载机不再分开，统一放这里）
+│   ├── photos/
+│   └── videos/
 ├── rover/                     ← 两轮卫星车
 │   ├── firmware/              Arduino 代码：最终蓝牙固件 + XBee 时期的车端 / 地面站代码
 │   │   ├── rover_hc05_bluetooth_FINAL/     ✅ 现场投放使用的最终固件
 │   │   ├── xbee_rover_enddevice_*/         ⚙️ 早期 XBee 车端
 │   │   ├── xbee_ground_coordinator*/       ⚙️ 早期 XBee 地面站
 │   │   └── component_tests/                🧪 BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试
-│   ├── cad/fusion360_components/           各元件的 Fusion 360 参考模型
-│   └── media/                 装配 / 台架测试 / 现场投放的照片与视频
+│   └── cad/fusion360_components/           各元件的 Fusion 360 参考模型
 └── fixed_wing_aircraft/       ← 固定翼载机
     ├── cad_models/            机体 CAD / 结构图纸
     ├── docs/                  接线、通道映射等文档
-    ├── firmware_flight_controller/   飞控固件与调参配置
-    └── media/                 照片与视频
+    └── firmware_flight_controller/   飞控固件与调参配置
 ```
 
 ## 4. 快速上手（怎么把卫星车跑起来）

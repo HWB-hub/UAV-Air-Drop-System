@@ -46,10 +46,10 @@ that **the payload keeps working after landing**.
 The mission chain has four steps:
 
 ```text
-  +-------------+ servo bay door opens                                                    +----------------------+
-  | FIXED-WING  | (transmitter Ch.6)                                                      |  ROVER EJECTED FROM  |
-  |  AIRCRAFT   | ------------------------>                                               |  THE BAY, ~50 m AGL  |
-  +-------------+                                                                         +-----------+----------+
+  +-------------+ servo bay door opens       +----------------------+
+  | FIXED-WING  | (transmitter Ch.6)         |  ROVER EJECTED FROM  |
+  |  AIRCRAFT   | ------------------------>  |  THE BAY, ~50 m AGL  |
+  +-------------+                            +-----------+----------+
                                                          |
                                                          |  keeps flying forward
                                                          v

@@ -1,3 +1,5 @@
+[简体中文](README.md) | **English**
+
 # Two-Wheeled Rover Deployment & Recovery System
 
 A complete **drop → parachute descent → recovery → continue working on the ground** demonstration
@@ -27,7 +29,7 @@ attitude data.
    - [2.6 Fixed-wing carrier aircraft](#26-fixed-wing-carrier-aircraft)
    - [2.7 Test results & measured data](#27-test-results--measured-data)
    - [2.8 Problems & solutions](#28-problems--solutions)
-   - [2.9 Budget & roles](#29-budget--roles)
+   - [2.9 Budget](#29-budget)
 3. [Repository layout](#3-repository-layout)
 4. [Getting started (running the Rover)](#4-getting-started-running-the-rover)
 5. [License & team](#5-license--team)
@@ -264,7 +266,7 @@ parachute recovery sequence.
 | Battery overheating | Continuous high current | Heat sinks + ventilation holes in the shell |
 | DPS310 measurement error | Barometric calibration drift | Real-time (Kalman-style) filtering of the pressure |
 
-### 2.9 Budget & roles
+### 2.9 Budget
 
 **Budget (≈ ¥798 in total):**
 
@@ -284,10 +286,6 @@ parachute recovery sequence.
 
 Equipment rental and the test site were free. (The XBee was later swapped for the HC-05, see
 [2.5](#25-wireless-iteration-why-bluetooth-instead-of-xbee).)
-
-**Roles**: **Huang Wenbo** — Rover circuit design, wheel design and assembly · **Alexander He Wu** —
-flight testing, data analysis · **Kong Xiaosong** — aircraft assembly, flight-control programming ·
-**Ma Tianchen** — aircraft assembly, parachute design, CAD modelling.
 
 ## 3. Repository layout
 

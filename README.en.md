@@ -46,26 +46,30 @@ that **the payload keeps working after landing**.
 The mission chain has four steps:
 
 ```text
-  ┌──────────────┐ servo bay door opens                                                     ┌────────────────────────┐
-  │  FIXED-WING  │ (transmitter Ch.6)                                                       │   ROVER EJECTED FROM   │
-  │   AIRCRAFT   │ ─────────────────────────►                                               │   THE BAY, ~50 m AGL   │
-  └──────────────┘                                                                          └────────────┬───────────┘
-                                                           │  keeps flying forward
-                                                           ▼
-                                  ┌──────────────────────────────────────────────────┐
-                                  │    PARACHUTE RELEASE (servo + steel-rod pin)     │
-                                  │  rod withdrawn -> cord loop free -> chute opens  │
-                                  └────────────────────────┬─────────────────────────┘
-                                                           ▼
-                                        ┌────────────────────────────────────┐
-                                        │   STABLE DESCENT -> SAFE LANDING   │
-                                        │     (30 m / 1.5 m drop tests)      │
-                                        └──────────────────┬─────────────────┘
-                                                           ▼
-                            ┌────────────────────────────────────────────────────────────┐
-                            │ AFTER LANDING: Bluetooth HC-05 drive commands (F/B/L/R/S), │
-                            │  MPU6050 / DPS310 / LM35 telemetry streaming continuously  │
-                            └────────────────────────────────────────────────────────────┘
+  +-------------+ servo bay door opens                                                    +----------------------+
+  | FIXED-WING  | (transmitter Ch.6)                                                      |  ROVER EJECTED FROM  |
+  |  AIRCRAFT   | ------------------------>                                               |  THE BAY, ~50 m AGL  |
+  +-------------+                                                                         +-----------+----------+
+                                                         |
+                                                         |  keeps flying forward
+                                                         v
+                               +--------------------------------------------------+
+                               |    PARACHUTE RELEASE (servo + steel-rod pin)     |
+                               |  rod withdrawn -> cord loop free -> chute opens  |
+                               +-------------------------+------------------------+
+                                                         |
+                                                         v
+                               +--------------------------------------------------+
+                               |          STABLE DESCENT -> SAFE LANDING          |
+                               |            (30 m / 1.5 m drop tests)             |
+                               +-------------------------+------------------------+
+                                                         |
+                                                         v
+                               +--------------------------------------------------+
+                               |  AFTER LANDING: Bluetooth HC-05 drive commands   |
+                               |  (F/B/L/R/S); MPU6050 / DPS310 / LM35 telemetry  |
+                               |              streaming continuously              |
+                               +--------------------------------------------------+
 ```
 
 1. **Carry** — the Rover is fixed inside the aircraft's payload bay and climbs to the release altitude with it.
@@ -101,19 +105,19 @@ the usual electromagnetic lock**, removing almost all of the cost and the circui
 
 ```text
    Parachute nylon cord (loop)
-           │
-           ▼
-  ┌─────────────────┐
-  │    servo arm    │   the steel rod passes through the loop,
-  │    (SG90, D3)   │──► held in place by a self-made latch
-  └────────┬────────┘
-           │  servo rotates 90°  ("U" command over Bluetooth)
-           ▼
-  ┌─────────────────┐
-  │  rod withdrawn  │──► cord loop free, the parachute is released
-  └─────────────────┘
-           │  relative airflow / rover inertia pulls the chute out
-           ▼
+           |
+           v
+  +-----------------+
+  |    servo arm    |   the steel rod passes through the loop,
+  |   (SG90, D3)    |--> held in place by a self-made latch
+  +--------+--------+
+           |  servo rotates 90°  ("U" command over Bluetooth)
+           v
+  +-----------------+
+  |  rod withdrawn  |--> cord loop free, the parachute is released
+  +-----------------+
+           |  relative airflow / rover inertia pulls the chute out
+           v
         parachute deploys
 ```
 

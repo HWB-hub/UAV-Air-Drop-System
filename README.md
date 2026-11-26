@@ -1,161 +1,173 @@
-**简体中文** | [English](README.en.md)
+**English** | [简体中文](README.zh-CN.md)
 
-# 两轮卫星车投放与回收系统
+# Two-Wheeled Rover Deployment & Recovery System
 
-**Two-Wheeled Rover Deployment & Recovery System**
+A complete **drop → parachute descent → recovery → continue working on the ground** demonstration
+system: a self-built fixed-wing UAV carries a 3D-printed **two-wheeled rover (Rover)** up to about
+50 m and releases it; the Rover lands safely on a **servo-triggered parachute**, and after landing it
+can still be **driven remotely over Bluetooth** while continuously streaming temperature, pressure and
+attitude data.
 
-一套完整的 **投放 → 伞降 → 回收 → 落地继续作业** 演示系统：自制固定翼无人机把一台 3D 打印的
-**两轮卫星车（Rover）** 带到约 50 m 高空投放；卫星车靠**舵机触发的降落伞**安全落地；
-落地后还能用**蓝牙遥控行驶**，并持续回传温度、气压、姿态数据。
+## Full-System Demo
+
+<a href="https://youtu.be/75TSRx3hjC4"><img src="media/photos/RC_plane_making13.jpg" width="560" alt="Fixed-wing carrier aircraft. Open the full-system demo on YouTube."></a>
+
+[Watch the full-system demo on YouTube](https://youtu.be/75TSRx3hjC4)
 
 | | |
 |---|---|
-| **项目定位** | 在业余预算下模拟真实卫星「发射 → 部署 → 下降 → 回收 → 继续工作」的全流程 |
-| **我们做了什么** | ① 两轮卫星车：结构设计 + 3D 打印 + 电路 + 固件 + 伞舱释放机构 ② 固定翼载机的机体、动力与飞控 ③ 全部地面 / 空中测试与数据分析 |
-| **关键指标** | 伞舱释放机构成本约为电磁锁方案的 1/10（约 $2 vs $20）· 载荷比 1:4 · 投放横向精度 ±1.5 m · 重复投放零损坏 |
-| **团队** | 黄文博 · 孔筱崧 · Alexander He Wu · 马天辰 |
+| **Scope** | Simulates the full real-satellite workflow — launch → deployment → descent → recovery → continued operation — on an amateur budget |
+| **What we did** | ① Two-wheeled Rover: mechanical design + 3D printing + electronics + firmware + parachute-bay release mechanism ② Fixed-wing carrier aircraft: airframe, power system and flight controller ③ All ground / airborne testing and data analysis |
+| **Key figures** | Parachute-bay release costs about 1/10 of an electromagnetic-lock design (≈ $2 vs $20) · payload ratio 1:4 · ±1.5 m lateral drop accuracy · zero damage over repeated drops |
+| **Team** | Huang Wenbo · Kong Xiaosong · Alexander He Wu · Ma Tianchen |
 
 ---
 
-## 目录
+## Table of contents
 
-1. [这个系统是什么](#1-这个系统是什么)
-2. [我们做了什么](#2-我们做了什么)
-   - [2.1 卫星车 · 机械结构](#21-卫星车--机械结构)
-   - [2.2 卫星车 · 伞舱释放机构（核心创新）](#22-卫星车--伞舱释放机构核心创新)
-   - [2.3 卫星车 · 电路与硬件](#23-卫星车--电路与硬件)
-   - [2.4 卫星车 · 固件与通信协议](#24-卫星车--固件与通信协议)
-   - [2.5 无线方案迭代：为什么最终用蓝牙而不是 XBee](#25-无线方案迭代为什么最终用蓝牙而不是-xbee)
-   - [2.6 固定翼载机](#26-固定翼载机)
-   - [2.7 测试与实测数据](#27-测试与实测数据)
-   - [2.8 遇到的问题与解决办法](#28-遇到的问题与解决办法)
-   - [2.9 预算](#29-预算)
-3. [仓库结构](#3-仓库结构)
-4. [快速上手（怎么把卫星车跑起来）](#4-快速上手怎么把卫星车跑起来)
-5. [许可与团队](#5-许可与团队)
+1. [What this system is](#1-what-this-system-is)
+2. [What we did](#2-what-we-did)
+   - [2.1 Rover · Mechanical design](#21-rover--mechanical-design)
+   - [2.2 Rover · Parachute-bay release mechanism (key innovation)](#22-rover--parachute-bay-release-mechanism-key-innovation)
+   - [2.3 Rover · Electronics & hardware](#23-rover--electronics--hardware)
+   - [2.4 Rover · Firmware & communication protocol](#24-rover--firmware--communication-protocol)
+   - [2.5 Wireless iteration: why Bluetooth instead of XBee](#25-wireless-iteration-why-bluetooth-instead-of-xbee)
+   - [2.6 Fixed-wing carrier aircraft](#26-fixed-wing-carrier-aircraft)
+   - [2.7 Test results & measured data](#27-test-results--measured-data)
+   - [2.8 Problems & solutions](#28-problems--solutions)
+   - [2.9 Budget](#29-budget)
+3. [Repository layout](#3-repository-layout)
+4. [Getting started (running the Rover)](#4-getting-started-running-the-rover)
+5. [License & team](#5-license--team)
 
 ---
 
-## 1. 这个系统是什么
+## 1. What this system is
 
-把它想成一个**缩小的卫星任务**：真实的卫星要由火箭送到轨道、在轨分离、再入并回收；我们用一架
-固定翼无人机代替火箭、用一台两轮小车代替卫星载荷，把这条链路完整地做了一遍，并且**落地之后
-载荷还能继续工作**。
+Think of it as a **downscaled satellite mission**: a real satellite is carried to orbit by a rocket,
+separates in orbit, re-enters and is recovered; we replaced the rocket with a fixed-wing UAV and the
+satellite payload with a two-wheeled vehicle, and ran the whole chain end to end — including the fact
+that **the payload keeps working after landing**.
 
-整条任务链分四步：
+The mission chain has four steps:
 
 ```text
-  +-------------+ 舵机开舱门（遥控器 6 通道）    +----------------------+
-  |  固定翼载机  |                              |    卫星车从机腹弹出   |
-  |  （无人机）  | ------------------------->   |     高度约 50 m      |
-  +-------------+                              +-----------+----------+
-                                                           |
-                                                           |  弹出后继续前冲
-                                                           v
-                                   +----------------------------------------------+
-                                   |           伞舱释放（舵机 + 铁杆插销）          |
-                                   |          铁杆抽出 -> 尼龙绳脱开 -> 开伞        |
-                                   +-----------------------+----------------------+
-                                                           |
-                                                           v
-                                   +----------------------------------------------+
-                                   |              稳定下降 -> 安全着陆             |
-                                   |           （30 m / 1.5 m 投放试验）           |
-                                   +-----------------------+----------------------+
-                                                           |
-                                                           v
-                                   +----------------------------------------------+
-                                   |    落地后：蓝牙 HC-05 遥控行驶（F/B/L/R/S）    |
-                                   |    并持续回传 MPU6050 / DPS310 / LM35 数据    |
-                                   +----------------------------------------------+
+  +-------------+ servo bay door opens       +----------------------+
+  | FIXED-WING  | (transmitter Ch.6)         |  ROVER EJECTED FROM  |
+  |  AIRCRAFT   | ------------------------>  |  THE BAY, ~50 m AGL  |
+  +-------------+                            +-----------+----------+
+                                                         |
+                                                         |  keeps flying forward
+                                                         v
+                               +--------------------------------------------------+
+                               |    PARACHUTE RELEASE (servo + steel-rod pin)     |
+                               |  rod withdrawn -> cord loop free -> chute opens  |
+                               +-------------------------+------------------------+
+                                                         |
+                                                         v
+                               +--------------------------------------------------+
+                               |          STABLE DESCENT -> SAFE LANDING          |
+                               |            (30 m / 1.5 m drop tests)             |
+                               +-------------------------+------------------------+
+                                                         |
+                                                         v
+                               +--------------------------------------------------+
+                               |  AFTER LANDING: Bluetooth HC-05 drive commands   |
+                               |  (F/B/L/R/S); MPU6050 / DPS310 / LM35 telemetry  |
+                               |              streaming continuously              |
+                               +--------------------------------------------------+
 ```
 
-1. **挂载**：卫星车被固定在载机的舱内，随飞机爬升到投放高度。
-2. **投放**：飞手拨动遥控器第 6 通道，舵机打开舱门，卫星车被抛出。
-3. **下降**：伞舱释放机构触发（见 [2.2](#22-卫星车--伞舱释放机构核心创新)），降落伞张开，卫星车稳定落地。
-4. **回收与作业**：着陆后卫星车测量环境参数，并可由蓝牙遥控行驶，完成「回收后继续执行任务」这一环。
+1. **Carry** — the Rover is fixed inside the aircraft's payload bay and climbs to the release altitude with it.
+2. **Release** — the pilot flips transmitter channel 6; the servo opens the bay door and the Rover is ejected.
+3. **Descent** — the parachute-bay release mechanism fires (see [2.2](#22-rover--parachute-bay-release-mechanism-key-innovation)); the parachute opens and the Rover comes down safely.
+4. **Recovery & operation** — after touchdown the Rover measures environmental parameters and can be driven over Bluetooth, completing the "keep working after recovery" stage.
 
-## 2. 我们做了什么
+## 2. What we did
 
-### 2.1 卫星车 · 机械结构
+### 2.1 Rover · Mechanical design
 
-车体在 **Autodesk Fusion 360** 中建模、**3D 打印**成型。最终材料为 **PETG**，填充率 **30%**
-（早期原型用陶瓷树脂、层高 0.3 mm；早期投放试验出现开裂后，改用 PETG 并把填充率提到 30% 以吸收冲击）。
+The body was modelled in **Autodesk Fusion 360** and **3D-printed**. The final material is **PETG** at
+**30 %** infill (early prototypes used ceramic resin with a **0.3 mm** layer height; after cracks
+appeared in early drop tests we switched to PETG and raised the infill to 30 % to absorb impacts).
 
-打印壳体的几个设计要点：
+Key points of the printed shell:
 
-* **两侧轮舱**按 N20 电机的轴距设计，并留出电机驱动与电池的**散热通风孔**。
-* **传感器凹槽**按 **±0.2 mm** 公差开槽固定 MPU6050 与 DPS310，保证不同批次装配后测量轴一致。
-* **舵机支架**竖直安装在壳体顶部，通过焊接铁杆连接到插销卡槽；静态测试中插销可拉住 **50 g** 后才脱开。
-* **两个 40 mm 橡胶胎面车轮**，配合**差速（滑移）转向**，可爬 **15°** 坡、可原地转向，不需要转向舵机。
-* **抗冲击**：结构通过 **10 次 1 m 自由落体**测试，壳体未开裂、传感器未位移；30 m / 1.5 m 伞降试验**零损坏**。
-* 底部加一块**玻纤底板**增加刚度，并作为电路板与电池的安装面。
+* **Two wheel bays** sized to the N20 motor axle spacing, with **ventilation holes** for the motor drivers and the battery.
+* **Sensor recesses** cut to a **±0.2 mm** tolerance to hold the MPU6050 and the DPS310, keeping the measurement axes identical between builds.
+* **Servo bracket** mounted vertically on top of the shell and linked by a welded steel rod to the latch slot; in static testing the pin held **50 g** before releasing.
+* **Two 40 mm rubber-tread wheels** with **differential (skid) steering**: climbs **15°** slopes and can pivot on the spot — no steering servo needed.
+* **Impact resistance**: the structure survived **10 × 1 m free-fall drops** with no shell cracks and no sensor displacement; the 30 m / 1.5 m parachute drops caused **zero damage**.
+* A **fibreglass base plate** stiffens the chassis and serves as the mounting surface for the PCB and the battery.
 
-> 🖼️ 各元件的 Fusion 360 参考模型（Nano、MPU6050、车轮、N20 电机、电池、万用板、舵机、XBee、电机控制模块）
-> 见 [`rover/cad/fusion360_components/`](rover/cad/fusion360_components/)。
+> 🖼️ The Fusion 360 reference models of the individual parts (Nano, MPU6050, wheels, N20 motors,
+> battery, perfboard, servo, XBee, motor-driver module) are in
+> [`rover/cad/fusion360_components/`](rover/cad/fusion360_components/).
 
-### 2.2 卫星车 · 伞舱释放机构（核心创新）
+### 2.2 Rover · Parachute-bay release mechanism (key innovation)
 
-这是整个卫星车最有特色的一块：**用一颗微型舵机 + 一根铁杆插销，替代了常见的电磁锁**，
-把成本与电路复杂度几乎全部省掉。
+This is the most distinctive part of the Rover: **a single micro servo plus a steel-rod pin replaces
+the usual electromagnetic lock**, removing almost all of the cost and the circuit complexity.
 
 ```text
-   降落伞尼龙绳（绳环）
+   Parachute nylon cord (loop)
            |
            v
   +-----------------+
-  |    舵机摇臂     |   铁杆穿过绳环，
-  |   (SG90, D3)    |--> 由自制卡槽固定住
+  |    servo arm    |   the steel rod passes through the loop,
+  |   (SG90, D3)    |--> held in place by a self-made latch
   +--------+--------+
-           |  舵机转过 90°（蓝牙发送 "U" 指令）
+           |  servo rotates 90°  ("U" command over Bluetooth)
            v
   +-----------------+
-  |   铁杆被抽回    |--> 绳环脱开，降落伞自由
+  |  rod withdrawn  |--> cord loop free, the parachute is released
   +-----------------+
-           |  相对气流 / 卫星车惯性把伞带出
+           |  relative airflow / rover inertia pulls the chute out
            v
-        降落伞张开
+        parachute deploys
 ```
 
-工作过程：
+How it works:
 
-1. 一根**系留铁杆**固定在 SG90 舵机摇臂上，并由一块自制卡槽锁住；铁杆**穿过降落伞尼龙绳上的绳环**，
-   把折叠好的降落伞**扣住**。
-2. 需要开伞时，Arduino 让舵机转过 **90°**（蓝牙发 `U`），摇臂旋转、**铁杆从绳环中抽出**。
-3. 降落伞此时已自由，卫星车继续飞行，伞被**相对气流 / 惯性**拉出并充气张开——
-   不需要火工品、不需要弹簧、不需要额外执行器。
+1. A **captive steel rod** is fixed to the SG90 servo arm and locked by a self-made latch; the rod
+   **passes through a loop in the parachute's nylon cord**, **holding the folded parachute captive**.
+2. To release, the Arduino sweeps the servo through **90°** (send `U` over Bluetooth); the arm rotates
+   and **withdraws the rod from the cord loop**.
+3. The parachute is now free. The Rover keeps flying and the chute is pulled out and inflated by
+   **relative airflow / inertia** — no pyrotechnics, no springs, no extra actuator.
 
-选这个方案的理由：
+Why this design was chosen:
 
-| 指标 | 电磁锁方案 | 舵机 + 铁杆（本项目） |
+| Metric | Electromagnetic lock | Servo + steel rod (this project) |
 |---|---|---|
-| 器件成本 | 约 $20 | **约 $2（降低约 90%）** |
-| 需要额外电路 | 驱动电路 + 锁扣线圈 | 不需要，一颗普通舵机、直接接 Arduino |
-| 可靠性（试验） | — | 30 m / 1.5 m 投放试验约 98% 成功开伞 |
-| 失效表现 | 卡扣卡死 / 线圈过热 | 舵机堵转 → 复位即可；伞始终被扣住（偏安全） |
+| Part cost | ≈ $20 | **≈ $2 (≈ 90 % cheaper)** |
+| Extra electronics | Driver circuit + latch coil | None — one ordinary servo, wired straight to the Arduino |
+| Reliability (tests) | — | ≈ 98 % successful deployments in the 30 m / 1.5 m drop tests |
+| Failure mode | Latch jams / coil overheats | Servo stalls → reset it; the chute stays held (fail-safe) |
 
-### 2.3 卫星车 · 电路与硬件
+### 2.3 Rover · Electronics & hardware
 
-主控是 **Arduino Nano（ATmega328P）**。两个 **N20 减速电机**由 **TB6612FNG 双 H 桥**驱动，
-两路驱动分别接到 **4 个数字口**（IN1/IN2 + IN3/IN4），因此左右轮可各自正反转，实现差速转向。
-电机供电直接从 **7.4 V（2S）锂聚合物电池**取，避免大电流干扰逻辑电源。
+The main controller is an **Arduino Nano (ATmega328P)**. The two **N20 gear motors** are driven by a
+**TB6612FNG dual H-bridge**; its two channels are wired to **four digital pins** (IN1/IN2 + IN3/IN4),
+so each wheel can turn forwards or backwards on its own, giving differential steering. Motor power is
+taken straight from the **7.4 V (2S) LiPo** to keep the high current off the logic rail.
 
-最终固件（`rover_hc05_bluetooth_FINAL`）的接线：
+Wiring of the final firmware (`rover_hc05_bluetooth_FINAL`):
 
-| 功能 | 引脚 | 说明 |
+| Function | Pin | Notes |
 |---|---|---|
-| 电机 A（左）IN1 / IN2 | **D4 / D5** | 接 TB6612FNG Motor A |
-| 电机 B（右）IN3 / IN4 | **D6 / D8** | 接 TB6612FNG Motor B |
-| 降落伞 SG90 舵机（信号） | **D3** | PWM，0° → 90° 即释放 |
-| LM35DZ（模拟温度） | **A2** | 10 mV/°C，`V = 采样值×5/1023`，`T = V×100` |
-| MPU6050（I²C） | **A4 (SDA) / A5 (SCL)** | 地址 `0x68`，原始值 /16384（加速度）、/131（陀螺仪） |
-| DPS310 气压计 | **SPI，CS = D10** | `dps.begin_SPI(10)`（Adafruit_DPS310） |
-| HC-05 蓝牙 | **D0 (RX) / D1 (TX)** | 硬件串口，9600 波特率 |
-| 串口调试 | USB | 同一路 9600 串口输出 |
+| Motor A (left) IN1 / IN2 | **D4 / D5** | to TB6612FNG Motor A |
+| Motor B (right) IN3 / IN4 | **D6 / D8** | to TB6612FNG Motor B |
+| Parachute SG90 servo (signal) | **D3** | PWM, 0° → 90° releases the chute |
+| LM35DZ (analog temperature) | **A2** | 10 mV/°C, `V = reading×5/1023`, `T = V×100` |
+| MPU6050 (I²C) | **A4 (SDA) / A5 (SCL)** | address `0x68`, raw values /16384 (accel), /131 (gyro) |
+| DPS310 barometer | **SPI, CS = D10** | `dps.begin_SPI(10)` (Adafruit_DPS310) |
+| HC-05 Bluetooth | **D0 (RX) / D1 (TX)** | hardware UART, 9600 baud |
+| Serial debug | USB | same 9600 baud stream |
 
-**电源可行性估算（电子部分最坏情况电流预算）：**
+**Power feasibility estimate (worst-case current budget of the electronics):**
 
-| 器件 | 电流 |
+| Part | Current |
 |---|---|
 | MPU6050 | 5 mA |
 | BMP280 | 5 mA |
@@ -163,168 +175,174 @@
 | XBee-PRO S1 | 50 mA |
 | TB6612FNG | 10 mA |
 | Arduino Nano | 50 mA |
-| N20 减速电机 ×2 | 各 150 mA |
-| **合计** | **约 475 mA** |
+| N20 gear motor ×2 | 150 mA each |
+| **Total** | **≈ 475 mA** |
 
-这个估算确认了 7.4 V（2S）锂电池 + 5 V 稳压足以稳定供给整块电路板。
+This estimate confirmed that the 7.4 V (2S) LiPo plus a 5 V regulator can supply the whole board
+reliably.
 
-### 2.4 卫星车 · 固件与通信协议
+### 2.4 Rover · Firmware & communication protocol
 
-全部 Arduino 代码在 [`rover/firmware/`](rover/firmware/)。每个文件夹都是一个**独立的 Arduino
-工程**：用 Arduino IDE 打开 `.ino`，板子选 **Arduino Nano / ATmega328P**，通过 USB 下载即可。
+All Arduino code lives in [`rover/firmware/`](rover/firmware/). Every folder is a **standalone Arduino
+sketch**: open the `.ino` in the Arduino IDE, select **Arduino Nano / ATmega328P** and upload over USB.
 
-| 工程 | 状态 | 通信方式 | 说明 |
+| Sketch | Status | Link | Notes |
 |---|---|---|---|
-| `rover_hc05_bluetooth_FINAL` | ✅ **最终版，现场投放使用的就是它** | HC-05 蓝牙，硬件串口 D0/D1 | 传感器采集 + 遥测输出 + 电机控制 + 伞舱舵机指令 |
-| `xbee_rover_enddevice_swserial` | ⚙️ 早期（XBee） | XBee 接软串口 D2/D3 | 卫星车作为 XBee 终端节点，数据经电台转发 |
-| `xbee_rover_enddevice_hwserial` | ⚙️ 早期（XBee） | XBee 接硬件串口 | 终端节点变体（增加了打印 NaN 的保护） |
-| `xbee_ground_coordinator` | ⚙️ 早期（XBee） | XBee 接软串口 D2/D3 | 地面站协调器：接收遥测、把键盘指令转发给卫星车 |
-| `xbee_ground_coordinator_dev` | ⚙️ 开发迭代 | 同上 | 协调器变体（转发前会去掉 CR/LF） |
-| `component_tests/*` | 🧪 元件测试 | USB 串口 | BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试程序 |
+| `rover_hc05_bluetooth_FINAL` | ✅ **final version — the one used in the field deployment** | HC-05 Bluetooth, hardware UART D0/D1 | Sensor acquisition + telemetry output + motor control + parachute servo commands |
+| `xbee_rover_enddevice_swserial` | ⚙️ earlier (XBee) | XBee on software serial D2/D3 | Rover as an XBee end device; data forwarded over the radio |
+| `xbee_rover_enddevice_hwserial` | ⚙️ earlier (XBee) | XBee on hardware UART | End-device variant (adds protection when printing NaN) |
+| `xbee_ground_coordinator` | ⚙️ earlier (XBee) | XBee on software serial D2/D3 | Ground-station coordinator: receives telemetry, forwards typed commands to the Rover |
+| `xbee_ground_coordinator_dev` | ⚙️ development iteration | same | Coordinator variant (strips CR/LF before forwarding) |
+| `component_tests/*` | 🧪 component tests | USB serial | Single-part test sketches for BMP280 / DPS310 / LM35DZ / MPU6050 |
 
-**遥测帧**（约每秒 1 帧，从 HC-05 串口 / USB 输出，9600 波特率）：
+**Telemetry frame** (about 1 frame per second on the HC-05 UART / USB, 9600 baud):
 
 ```text
 T:<°C>,P:<hPa>,AX:<g>,AY:<g>,AZ:<g>,GX:<°/s>,GY:<°/s>,GZ:<°/s>,MPU Temp:<°C>
 ```
 
-**行驶 / 开伞指令**——卫星车在 `handleCommand()` 里读取**单个 ASCII 字符**，
-用任意蓝牙串口 App 连上 HC-05 即可发送：
+**Drive / release commands** — the Rover reads a **single ASCII character** in `handleCommand()`,
+so any Bluetooth serial app paired to the HC-05 can send them:
 
-| 字符 | 效果（最终固件） |
+| Char | Effect (final firmware) |
 |---|---|
-| `F` | 前进 —— 两个电机同向驱动 |
-| `B` | 后退 —— 两个电机反向驱动 |
-| `L` | 原地左转 —— 左轮反转、右轮正转 |
-| `R` | 原地右转 —— 左轮正转、右轮反转 |
-| `S` | 两轮停转，同时把伞舱舵机归位到 0° |
-| `U` | 舵机转到 90° → **释放降落伞** |
+| `F` | forward — both motors driven in the same direction |
+| `B` | backward — both motors driven in the opposite direction |
+| `L` | turn left on the spot — left wheel reversed, right wheel forward |
+| `R` | turn right on the spot — left wheel forward, right wheel reversed |
+| `S` | both wheels stop and the parachute servo returns to 0° |
+| `U` | servo sweeps to 90° → **releases the parachute** |
 
-### 2.5 无线方案迭代：为什么最终用蓝牙而不是 XBee
+### 2.5 Wireless iteration: why Bluetooth instead of XBee
 
-第一版无线方案用的是 **XBee-PRO S1** 数传电台（配一块地面协调器板），但实测中 XBee 节点
-**在休眠/唤醒时不稳定**，而且在现场测试里**会丢接收到的射频数据**，于是换成了 **蓝牙 HC-05**
-（手机直接配对，不再需要单独的地面协调器硬件）。
+The first wireless design used **XBee-PRO S1** radio modems (with a ground coordinator board), but in
+real tests the XBee node was **unstable during sleep/wake-up** and **dropped incoming RF data** in the
+field, so the link was replaced with an **HC-05 Bluetooth** module (pairs straight with a phone, no
+separate ground coordinator hardware needed).
 
-| | XBee 方案（早期） | 蓝牙方案（最终） |
+| | XBee design (early) | Bluetooth design (final) |
 |---|---|---|
-| 无线模块 | **XBee-PRO S1** ↔ 地面协调器 | **HC-05** ↔ 手机串口 App |
-| 气压计 | **BMP280** | **DPS310**（精度更高） |
-| 现场表现 | ❌ 休眠/唤醒不稳定，测试中丢射频数据 | ✅ 稳定，指令延迟 < 0.5 s |
-| 地面站 | 需要单独的协调器板 + 电脑 | 不需要，手机直接配对 |
+| Radio | **XBee-PRO S1** ↔ ground coordinator | **HC-05** ↔ phone serial app |
+| Barometer | **BMP280** | **DPS310** (higher precision) |
+| Field behaviour | ❌ unstable during sleep/wake-up, dropped RF data in tests | ✅ stable, command latency < 0.5 s |
+| Ground station | needs a separate coordinator board + a PC | none — a phone pairs directly |
 
-### 2.6 固定翼载机
+### 2.6 Fixed-wing carrier aircraft
 
-载机是一架自制固定翼飞机：机体用 **PP（魔术）板**激光切割成型、电子胶粘接，机翼与机身用
-**碳纤维杆**加强，控制连杆为钢丝推杆。动力与航电部分：
+The carrier is a self-built fixed-wing aircraft: the airframe is **laser-cut PP (magic) board** bonded
+with electronic adhesive, with **carbon-fibre rods** reinforcing the wings and fuselage and steel-wire
+pushrods as control linkages. Power and avionics:
 
-| 部件 | 规格 / 作用 |
+| Part | Spec / role |
 |---|---|
-| **A2212 KV1400** 无刷电机 | 2–3S，约 47 g，3.17 mm 轴 |
-| **40 A 电调 ×2** | 双发动力、差速推力 |
-| **4S 2200 mAh 45C 锂电池** | 主电源 |
-| **RF209S 九通道接收机** | PWM / PPM / S.BUS 输出 |
-| **舵机 ×7** | 副翼（2）、升降舵、方向舵、舱门等 |
-| **PID 飞控** | 电脑端预调参，提供增稳辅助 |
+| **A2212 KV1400** brushless motor | 2–3S, ≈ 47 g, 3.17 mm shaft |
+| **40 A ESC ×2** | twin powerplants, differential thrust |
+| **4S 2200 mAh 45C LiPo** | main power |
+| **RF209S** 9-channel receiver | PWM / PPM / S.BUS output |
+| **Servos ×7** | ailerons (2), elevator, rudder, bay door, etc. |
+| **PID flight controller** | pre-tuned on a PC, provides stability assist |
 
-投放任务用到的接收机通道映射：
+Receiver channel map used for the drop mission:
 
-| 通道 | 用途 |
+| Channel | Use |
 |---|---|
-| Ch1 | 副翼舵机 ×2（并联） |
-| Ch2 | 升降舵 |
-| Ch3 & Ch5 | 双电调（差速推力） |
-| Ch4 | 方向舵 |
-| **Ch6** | **舱门 —— 投放卫星车** |
-| **Ch9** | PID 飞控开关 |
+| Ch1 | aileron servos ×2 (paralleled) |
+| Ch2 | elevator |
+| Ch3 & Ch5 | twin ESCs (differential thrust) |
+| Ch4 | rudder |
+| **Ch6** | **bay door — releases the Rover** |
+| **Ch9** | PID flight controller on/off |
 
-飞手拨动 Ch6 打开舱门，卫星车在约 50 m 高度被投放，随后进入伞降回收流程。
+The pilot flips Ch6 to open the bay door; the Rover is released at about 50 m and then follows the
+parachute recovery sequence.
 
-### 2.7 测试与实测数据
+### 2.7 Test results & measured data
 
-* **投放 / 回收**：30 m 与 1.5 m 两种投放试验，开伞可靠（约 98%），PETG 壳体无破损，重复投放**零损坏**。
-* **投放精度**：从约 50 m 高度投放，横向落点精度 **±1.5 m**；载机载荷比 **1:4**。
-* **传感器**：
-  * MPU6050：加速度 ±2 g（±0.05 g）、陀螺仪 ±250 °/s（±3%）；现场数据里开伞瞬间 Z 轴加速度约变化 1.5 g。
-  * DPS310：量程 300–1200 hPa（±1 hPa），标定的高度误差 **±1.5 m**（融合后约 ±1.2 m）；地面输出稳定在约 1011 hPa。
-  * LM35DZ：现场实测稳定工作在 −10 … +40 °C 区间。
-* **通信**：HC-05 指令延迟 **< 0.5 s**（实测约 0.3 s 内响应），卫星车 ↔ 地面站链路端到端验证通过。
+* **Drop / recovery**: two kinds of drop tests, 30 m and 1.5 m — reliable deployments (≈ 98 %), no PETG shell damage, **zero damage** over repeated drops.
+* **Drop accuracy**: released from about 50 m, **±1.5 m** lateral landing accuracy; aircraft payload ratio **1:4**.
+* **Sensors**:
+  * MPU6050: accel ±2 g (±0.05 g), gyro ±250 °/s (±3 %); in the field data the Z-axis acceleration changes by about 1.5 g at the moment the chute opens.
+  * DPS310: 300–1200 hPa range (±1 hPa), calibrated altitude error **±1.5 m** (≈ ±1.2 m when fused); on the ground it outputs a stable ≈ 1011 hPa.
+  * LM35DZ: measured stable over −10 … +40 °C in the field.
+* **Comms**: HC-05 command latency **< 0.5 s** (measured response within about 0.3 s); the Rover ↔ ground station link was verified end to end.
 
-### 2.8 遇到的问题与解决办法
+### 2.8 Problems & solutions
 
-| 问题 | 根本原因 | 解决办法 |
+| Problem | Root cause | Solution |
 |---|---|---|
-| 蓝牙信号丢失 | 电机线缆的电磁干扰 | 电机线加屏蔽 + HC-05 上套磁环 |
-| 低温下传感器数据漂移 | LM35 噪声 | LM35 输出端并联 0.1 µF 电容 |
-| 壳体开裂 | 3D 打印层间结合强度不足 | 填充率提到 30% + 换 PETG 材料 |
-| 电池过热 | 持续大电流 | 加散热片 + 壳体开散热孔 |
-| DPS310 测量误差 | 气压标定漂移 | 对气压做实时（类卡尔曼）滤波 |
+| Bluetooth signal loss | EMI from the motor wiring | Shielded motor wiring + a ferrite bead on the HC-05 |
+| Sensor drift at low temperature | LM35 noise | 0.1 µF capacitor across the LM35 output |
+| Shell cracking | Weak layer bonding in the 3D print | Infill raised to 30 % + switched to PETG |
+| Battery overheating | Continuous high current | Heat sinks + ventilation holes in the shell |
+| DPS310 measurement error | Barometric calibration drift | Real-time (Kalman-style) filtering of the pressure |
 
-### 2.9 预算
+### 2.9 Budget
 
-**预算（合计约 ¥798）：**
+**Budget (≈ ¥798 in total):**
 
-| 卫星车电子与结构 | 价格（¥） | 载机部分 | 价格（¥） |
+| Rover electronics & structure | Price (¥) | Carrier aircraft | Price (¥) |
 |---|---|---|---|
-| XBee-PRO（初版方案） | 150 | 飞控板 | 100 |
-| MPU6050 | 15 | 无刷电机 | 80 |
-| BMP280 | 5 | 电调 ×2 | 100 |
-| LM35DZ | 3 | 舵机 ×7 | 35 |
-| N20 减速电机 ×2 | 15 | 2600 mAh 电池 | 100 |
-| 328PB 电路板 | 25 | 机壳 | 50 |
-| 玻纤底板 | 25 | — | — |
-| 电池 | 15 | — | — |
-| 3D 打印耗材 | 40 | — | — |
-| 降落伞材料 | 40 | — | — |
-| 购买舵机 | 5 | — | — |
+| XBee-PRO (early design) | 150 | flight-control board | 100 |
+| MPU6050 | 15 | brushless motor | 80 |
+| BMP280 | 5 | ESC ×2 | 100 |
+| LM35DZ | 3 | servos ×7 | 35 |
+| N20 gear motor ×2 | 15 | 2600 mAh battery | 100 |
+| 328PB circuit board | 25 | shell | 50 |
+| Fibreglass base plate | 25 | — | — |
+| Battery | 15 | — | — |
+| 3D-printing material | 40 | — | — |
+| Parachute material | 40 | — | — |
+| Servos (purchase) | 5 | — | — |
 
-设备租用与测试场地免费。（XBee 后来换成了 HC-05，见 [2.5](#25-无线方案迭代为什么最终用蓝牙而不是-xbee)。）
+Equipment rental and the test site were free. (The XBee was later swapped for the HC-05, see
+[2.5](#25-wireless-iteration-why-bluetooth-instead-of-xbee).)
 
-## 3. 仓库结构
+## 3. Repository layout
 
 ```text
 .
-├── README.md                  ← 中文说明（本文件）
-├── README.en.md               English version
-├── LICENSE                    MIT 许可证
+├── README.md                  ← English version (this file)
+├── README.zh-CN.md            ← Simplified Chinese version
+├── LICENSE                    MIT licence
 ├── data/
-│   └── launch_day/            发射当天的完整遥测日志（.xlsx，1517 条样本 / 约 120 s）
-├── media/                     ← 照片与视频（卫星车和载机不再分开，统一放这里）
+│   └── launch_day/            Full telemetry log recorded on launch day (.xlsx, 1517 samples / ≈ 120 s)
+├── media/                     ← photos and videos (rover and aircraft in one place)
 │   ├── photos/
 │   └── videos/
-├── rover/                     ← 两轮卫星车
-│   ├── firmware/              Arduino 代码：最终蓝牙固件 + XBee 时期的车端 / 地面站代码
-│   │   ├── rover_hc05_bluetooth_FINAL/     ✅ 现场投放使用的最终固件
-│   │   ├── xbee_rover_enddevice_*/         ⚙️ 早期 XBee 车端
-│   │   ├── xbee_ground_coordinator*/       ⚙️ 早期 XBee 地面站
-│   │   └── component_tests/                🧪 BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试
-│   └── cad/fusion360_components/           各元件的 Fusion 360 参考模型
-└── fixed_wing_aircraft/       ← 固定翼载机
-    ├── cad_models/            机体 CAD / 结构图纸
-    ├── docs/                  接线、通道映射等文档
-    └── firmware_flight_controller/   飞控固件与调参配置
+├── rover/                     ← the two-wheeled Rover
+│   ├── firmware/              Arduino code: final Bluetooth firmware + XBee-era rover / ground-station code
+│   │   ├── rover_hc05_bluetooth_FINAL/     ✅ final firmware used in the field deployment
+│   │   ├── xbee_rover_enddevice_*/         ⚙️ early XBee rover end devices
+│   │   ├── xbee_ground_coordinator*/       ⚙️ early XBee ground stations
+│   │   └── component_tests/                🧪 single-part tests for BMP280 / DPS310 / LM35DZ / MPU6050
+│   └── cad/fusion360_components/           Fusion 360 reference models of the individual parts
+└── fixed_wing_aircraft/       ← the fixed-wing carrier aircraft
+    ├── cad_models/            Airframe CAD / structural drawings
+    ├── docs/                  Wiring, channel maps and other documents
+    └── firmware_flight_controller/   Flight-controller firmware and tuning configuration
 ```
 
-## 4. 快速上手（怎么把卫星车跑起来）
+## 4. Getting started (running the Rover)
 
-**下载并运行最终固件：**
+**Download and run the final firmware:**
 
-1. 用 Arduino IDE 打开 `rover/firmware/rover_hc05_bluetooth_FINAL/rover_hc05_bluetooth_FINAL.ino`。
-2. 安装库：**Adafruit DPS310**、**Adafruit Unified Sensor**；`Servo`、`Wire`、`SPI` 为自带库。
-   （若你要回到早期的 BMP280 测试，再装 `Adafruit BMP280`。）
-3. 板子选 **Arduino Nano**，处理器 ATmega328P，下载器选 AVRISP mkII / USB。
-4. 按 [2.3](#23-卫星车--电路与硬件) 的表格接线，下载程序，打开串口监视器（**9600 波特率**），
-   应当看到约 1 Hz 的遥测数据流。
-5. 电机电源接 **7.4 V（2S）锂电池**，逻辑电源用 USB / 5 V 稳压。
-6. 用手机上的蓝牙串口 App 连接 HC-05，发送 `F` / `B` / `L` / `R` / `S` / `U` 字符即可驱动小车与开伞。
+1. Open `rover/firmware/rover_hc05_bluetooth_FINAL/rover_hc05_bluetooth_FINAL.ino` in the Arduino IDE.
+2. Install the libraries: **Adafruit DPS310**, **Adafruit Unified Sensor**; `Servo`, `Wire` and `SPI` are built in.
+   (If you want to go back to the earlier BMP280 test, also install `Adafruit BMP280`.)
+3. Select the board **Arduino Nano**, processor ATmega328P, programmer AVRISP mkII / USB.
+4. Wire it up as in the table in [2.3](#23-rover--electronics--hardware), upload, open the Serial Monitor
+   (**9600 baud**) — telemetry should stream at about 1 Hz.
+5. Power the motors from the **7.4 V (2S) LiPo** and the logic from USB / a 5 V regulator.
+6. Pair a Bluetooth serial app on your phone with the HC-05 and send `F` / `B` / `L` / `R` / `S` / `U`
+   characters to drive the Rover and to release the parachute.
 
-> ⚠️ **注意安全**：`U` 会触发开伞，台架测试时请先**不挂降落伞、空载测试舵机**；
-> 上电状态下请远离旋转的车轮与被弹出的铁杆。
+> ⚠️ **Safety**: `U` releases the parachute — bench-test the servo **with the parachute detached and no
+> load** first, and stay clear of the spinning wheels and the ejected rod while powered.
 
-## 5. 许可与团队
+## 5. License & team
 
-MIT 许可证，见 [`LICENSE`](LICENSE)。
+MIT licence, see [`LICENSE`](LICENSE).
 
-**团队**：黄文博 · 孔筱崧 · Alexander He Wu · 马天辰
+**Team**: Huang Wenbo · Kong Xiaosong · Alexander He Wu · Ma Tianchen
 
 *“Deploy. Recover. Innovate.”*

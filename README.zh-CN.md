@@ -10,8 +10,6 @@
 
 ## 整机演示
 
-<a href="https://youtu.be/75TSRx3hjC4"><img src="media/photos/RC_plane_making13.jpg" width="560" alt="固定翼载机实物照，点击在 YouTube 观看整机演示。"></a>
-
 [在 YouTube 观看整机演示](https://youtu.be/75TSRx3hjC4)
 
 | | |

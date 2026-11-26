@@ -10,8 +10,6 @@ attitude data.
 
 ## Full-System Demo
 
-<a href="https://youtu.be/75TSRx3hjC4"><img src="media/photos/RC_plane_making13.jpg" width="560" alt="Fixed-wing carrier aircraft. Open the full-system demo on YouTube."></a>
-
 [Watch the full-system demo on YouTube](https://youtu.be/75TSRx3hjC4)
 
 | | |

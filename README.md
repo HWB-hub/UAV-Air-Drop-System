@@ -89,6 +89,12 @@ The body was modelled in **Autodesk Fusion 360** and **3D-printed**. The final m
 **30 %** infill (early prototypes used ceramic resin with a **0.3 mm** layer height; after cracks
 appeared in early drop tests we switched to PETG and raised the infill to 30 % to absorb impacts).
 
+<p align="center">
+  <img src="rover/cad/rover-assembly.png" width="640" alt="Isometric CAD view of the rover body and onboard electronics">
+  <br>
+  <em>Rover CAD assembly. The physical rover uses off-the-shelf wheels.</em>
+</p>
+
 Key points of the printed shell:
 
 * **Two wheel bays** sized to the N20 motor axle spacing, with **ventilation holes** for the motor drivers and the battery.

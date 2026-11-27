@@ -107,7 +107,7 @@
 * **抗冲击**：结构通过 **10 次 1 m 自由落体**测试，壳体未开裂、传感器未位移；30 m / 1.5 m 伞降试验**零损坏**。
 * 底部加一块**玻纤底板**增加刚度，并作为电路板与电池的安装面。
 
-> 🖼️ 各元件的 Fusion 360 参考模型（Nano、MPU6050、车轮、N20 电机、电池、万用板、舵机、XBee、电机控制模块）
+> 各元件的 Fusion 360 参考模型（Nano、MPU6050、车轮、N20 电机、电池、万用板、舵机、XBee、电机控制模块）
 > 见 [`rover/cad/fusion360_components/`](rover/cad/fusion360_components/)。
 
 ### 2.2 卫星车 · 伞舱释放机构（核心创新）
@@ -120,13 +120,13 @@
            |
            v
   +-----------------+
-  |    舵机摇臂     |   铁杆穿过绳环，
+  |    舵机摇臂      |   铁杆穿过绳环，
   |   (SG90, D3)    |--> 由自制卡槽固定住
   +--------+--------+
            |  舵机转过 90°（蓝牙发送 "U" 指令）
            v
   +-----------------+
-  |   铁杆被抽回    |--> 绳环脱开，降落伞自由
+  |   铁杆被抽回     |--> 绳环脱开，降落伞自由
   +-----------------+
            |  相对气流 / 卫星车惯性把伞带出
            v
@@ -191,12 +191,12 @@
 
 | 工程 | 状态 | 通信方式 | 说明 |
 |---|---|---|---|
-| `rover_hc05_bluetooth_FINAL` | ✅ **最终版，现场投放使用的就是它** | HC-05 蓝牙，硬件串口 D0/D1 | 传感器采集 + 遥测输出 + 电机控制 + 伞舱舵机指令 |
-| `xbee_rover_enddevice_swserial` | ⚙️ 早期（XBee） | XBee 接软串口 D2/D3 | 卫星车作为 XBee 终端节点，数据经电台转发 |
-| `xbee_rover_enddevice_hwserial` | ⚙️ 早期（XBee） | XBee 接硬件串口 | 终端节点变体（增加了打印 NaN 的保护） |
-| `xbee_ground_coordinator` | ⚙️ 早期（XBee） | XBee 接软串口 D2/D3 | 地面站协调器：接收遥测、把键盘指令转发给卫星车 |
-| `xbee_ground_coordinator_dev` | ⚙️ 开发迭代 | 同上 | 协调器变体（转发前会去掉 CR/LF） |
-| `component_tests/*` | 🧪 元件测试 | USB 串口 | BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试程序 |
+| `rover_hc05_bluetooth_FINAL` |  **最终版，现场投放使用的就是它** | HC-05 蓝牙，硬件串口 D0/D1 | 传感器采集 + 遥测输出 + 电机控制 + 伞舱舵机指令 |
+| `xbee_rover_enddevice_swserial` |  早期（XBee） | XBee 接软串口 D2/D3 | 卫星车作为 XBee 终端节点，数据经电台转发 |
+| `xbee_rover_enddevice_hwserial` |  早期（XBee） | XBee 接硬件串口 | 终端节点变体（增加了打印 NaN 的保护） |
+| `xbee_ground_coordinator` |  早期（XBee） | XBee 接软串口 D2/D3 | 地面站协调器：接收遥测、把键盘指令转发给卫星车 |
+| `xbee_ground_coordinator_dev` |  开发迭代 | 同上 | 协调器变体（转发前会去掉 CR/LF） |
+| `component_tests/*` |  元件测试 | USB 串口 | BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试程序 |
 
 **遥测帧**（约每秒 1 帧，从 HC-05 串口 / USB 输出，9600 波特率）：
 
@@ -226,7 +226,7 @@ T:<°C>,P:<hPa>,AX:<g>,AY:<g>,AZ:<g>,GX:<°/s>,GY:<°/s>,GZ:<°/s>,MPU Temp:<°C
 |---|---|---|
 | 无线模块 | **XBee-PRO S1** ↔ 地面协调器 | **HC-05** ↔ 手机串口 App |
 | 气压计 | **BMP280** | **DPS310**（精度更高） |
-| 现场表现 | ❌ 休眠/唤醒不稳定，测试中丢射频数据 | ✅ 稳定，指令延迟 < 0.5 s |
+| 现场表现 | 休眠/唤醒不稳定，测试中丢射频数据 | 稳定，指令延迟 < 0.5 s |
 | 地面站 | 需要单独的协调器板 + 电脑 | 不需要，手机直接配对 |
 
 ### 2.6 固定翼载机
@@ -310,10 +310,10 @@ T:<°C>,P:<hPa>,AX:<g>,AY:<g>,AZ:<g>,GX:<°/s>,GY:<°/s>,GZ:<°/s>,MPU Temp:<°C
 │   └── videos/
 ├── rover/                     ← 两轮卫星车
 │   ├── firmware/              Arduino 代码：最终蓝牙固件 + XBee 时期的车端 / 地面站代码
-│   │   ├── rover_hc05_bluetooth_FINAL/     ✅ 现场投放使用的最终固件
-│   │   ├── xbee_rover_enddevice_*/         ⚙️ 早期 XBee 车端
-│   │   ├── xbee_ground_coordinator*/       ⚙️ 早期 XBee 地面站
-│   │   └── component_tests/                🧪 BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试
+│   │   ├── rover_hc05_bluetooth_FINAL/      现场投放使用的最终固件
+│   │   ├── xbee_rover_enddevice_*/          早期 XBee 车端
+│   │   ├── xbee_ground_coordinator*/        早期 XBee 地面站
+│   │   └── component_tests/                 BMP280 / DPS310 / LM35DZ / MPU6050 单器件测试
 │   └── cad/fusion360_components/           各元件的 Fusion 360 参考模型
 └── fixed_wing_aircraft/       ← 固定翼载机
     ├── cad_models/            机体 CAD / 结构图纸

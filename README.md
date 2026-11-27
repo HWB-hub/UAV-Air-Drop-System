@@ -110,7 +110,7 @@ Key points of the printed shell:
 * **Impact resistance**: the structure survived **10 × 1 m free-fall drops** with no shell cracks and no sensor displacement; the 30 m / 1.5 m parachute drops caused **zero damage**.
 * A **fibreglass base plate** stiffens the chassis and serves as the mounting surface for the PCB and the battery.
 
-> 🖼️ The Fusion 360 reference models of the individual parts (Nano, MPU6050, wheels, N20 motors,
+> The Fusion 360 reference models of the individual parts (Nano, MPU6050, wheels, N20 motors,
 > battery, perfboard, servo, XBee, motor-driver module) are in
 > [`rover/cad/fusion360_components/`](rover/cad/fusion360_components/).
 
@@ -198,12 +198,12 @@ sketch**: open the `.ino` in the Arduino IDE, select **Arduino Nano / ATmega328P
 
 | Sketch | Status | Link | Notes |
 |---|---|---|---|
-| `rover_hc05_bluetooth_FINAL` | ✅ **final version — the one used in the field deployment** | HC-05 Bluetooth, hardware UART D0/D1 | Sensor acquisition + telemetry output + motor control + parachute servo commands |
-| `xbee_rover_enddevice_swserial` | ⚙️ earlier (XBee) | XBee on software serial D2/D3 | Rover as an XBee end device; data forwarded over the radio |
-| `xbee_rover_enddevice_hwserial` | ⚙️ earlier (XBee) | XBee on hardware UART | End-device variant (adds protection when printing NaN) |
-| `xbee_ground_coordinator` | ⚙️ earlier (XBee) | XBee on software serial D2/D3 | Ground-station coordinator: receives telemetry, forwards typed commands to the Rover |
-| `xbee_ground_coordinator_dev` | ⚙️ development iteration | same | Coordinator variant (strips CR/LF before forwarding) |
-| `component_tests/*` | 🧪 component tests | USB serial | Single-part test sketches for BMP280 / DPS310 / LM35DZ / MPU6050 |
+| `rover_hc05_bluetooth_FINAL` | **final version — the one used in the field deployment** | HC-05 Bluetooth, hardware UART D0/D1 | Sensor acquisition + telemetry output + motor control + parachute servo commands |
+| `xbee_rover_enddevice_swserial` | earlier (XBee) | XBee on software serial D2/D3 | Rover as an XBee end device; data forwarded over the radio |
+| `xbee_rover_enddevice_hwserial` | earlier (XBee) | XBee on hardware UART | End-device variant (adds protection when printing NaN) |
+| `xbee_ground_coordinator` | earlier (XBee) | XBee on software serial D2/D3 | Ground-station coordinator: receives telemetry, forwards typed commands to the Rover |
+| `xbee_ground_coordinator_dev` | development iteration | same | Coordinator variant (strips CR/LF before forwarding) |
+| `component_tests/*` | component tests | USB serial | Single-part test sketches for BMP280 / DPS310 / LM35DZ / MPU6050 |
 
 **Telemetry frame** (about 1 frame per second on the HC-05 UART / USB, 9600 baud):
 
@@ -234,7 +234,7 @@ separate ground coordinator hardware needed).
 |---|---|---|
 | Radio | **XBee-PRO S1** ↔ ground coordinator | **HC-05** ↔ phone serial app |
 | Barometer | **BMP280** | **DPS310** (higher precision) |
-| Field behaviour | ❌ unstable during sleep/wake-up, dropped RF data in tests | ✅ stable, command latency < 0.5 s |
+| Field behaviour | unstable during sleep/wake-up, dropped RF data in tests | stable, command latency < 0.5 s |
 | Ground station | needs a separate coordinator board + a PC | none — a phone pairs directly |
 
 ### 2.6 Fixed-wing carrier aircraft
@@ -321,10 +321,10 @@ Equipment rental and the test site were free. (The XBee was later swapped for th
 │   └── videos/
 ├── rover/                     ← the two-wheeled Rover
 │   ├── firmware/              Arduino code: final Bluetooth firmware + XBee-era rover / ground-station code
-│   │   ├── rover_hc05_bluetooth_FINAL/     ✅ final firmware used in the field deployment
-│   │   ├── xbee_rover_enddevice_*/         ⚙️ early XBee rover end devices
-│   │   ├── xbee_ground_coordinator*/       ⚙️ early XBee ground stations
-│   │   └── component_tests/                🧪 single-part tests for BMP280 / DPS310 / LM35DZ / MPU6050
+│   │   ├── rover_hc05_bluetooth_FINAL/     final firmware used in the field deployment
+│   │   ├── xbee_rover_enddevice_*/         early XBee rover end devices
+│   │   ├── xbee_ground_coordinator*/       early XBee ground stations
+│   │   └── component_tests/                single-part tests for BMP280 / DPS310 / LM35DZ / MPU6050
 │   └── cad/fusion360_components/           Fusion 360 reference models of the individual parts
 └── fixed_wing_aircraft/       ← the fixed-wing carrier aircraft
     ├── cad_models/            Airframe CAD / structural drawings

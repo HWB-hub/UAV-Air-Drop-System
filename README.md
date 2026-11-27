@@ -16,7 +16,7 @@ attitude data.
 |---|---|
 | **Scope** | Simulates the full real-satellite workflow — launch → deployment → descent → recovery → continued operation — on an amateur budget |
 | **What we did** | ① Two-wheeled Rover: mechanical design + 3D printing + electronics + firmware + parachute-bay release mechanism ② Fixed-wing carrier aircraft: airframe, power system and flight controller ③ All ground / airborne testing and data analysis |
-| **Key figures** | Parachute-bay release costs about 1/10 of an electromagnetic-lock design (≈ $2 vs $20) · payload ratio 1:4 · ±1.5 m lateral drop accuracy · zero damage over repeated drops |
+| **Key figures** | Parachute-bay release costs about 1/10 of an electromagnetic-lock design (≈ $2 vs $20) · payload ratio 1:4 · zero damage over repeated drops |
 | **Team** | Huang Wenbo · Kong Xiaosong · Alexander He Wu · Ma Tianchen |
 
 ---
@@ -152,7 +152,6 @@ Why this design was chosen:
 |---|---|---|
 | Part cost | ≈ $20 | **≈ $2 (≈ 90 % cheaper)** |
 | Extra electronics | Driver circuit + latch coil | None — one ordinary servo, wired straight to the Arduino |
-| Reliability (tests) | — | ≈ 98 % successful deployments in the 30 m / 1.5 m drop tests |
 | Failure mode | Latch jams / coil overheats | Servo stalls → reset it; the chute stays held (fail-safe) |
 
 ### 2.3 Rover · Electronics & hardware
@@ -268,8 +267,8 @@ parachute recovery sequence.
 
 ### 2.7 Test results & measured data
 
-* **Drop / recovery**: two kinds of drop tests, 30 m and 1.5 m — reliable deployments (≈ 98 %), no PETG shell damage, **zero damage** over repeated drops.
-* **Drop accuracy**: released from about 50 m, **±1.5 m** lateral landing accuracy; aircraft payload ratio **1:4**.
+* **Drop / recovery**: parachute drop tests were conducted at 30 m and 1.5 m. The PETG shell showed no damage after repeated drops.
+* **Carrier aircraft**: the rover was released from about 50 m. The aircraft payload ratio was **1:4**.
 * **Sensors**:
   * MPU6050: accel ±2 g (±0.05 g), gyro ±250 °/s (±3 %); in the field data the Z-axis acceleration changes by about 1.5 g at the moment the chute opens.
   * DPS310: 300–1200 hPa range (±1 hPa), calibrated altitude error **±1.5 m** (≈ ±1.2 m when fused); on the ground it outputs a stable ≈ 1011 hPa.

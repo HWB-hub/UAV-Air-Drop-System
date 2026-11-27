@@ -328,7 +328,7 @@ Equipment rental and the test site were free. (The XBee was later swapped for th
 └── fixed_wing_aircraft/       ← the fixed-wing carrier aircraft
     ├── cad_models/            Airframe CAD / structural drawings
     ├── docs/                  Wiring, channel maps and other documents
-    └── firmware_flight_controller/   Flight-controller firmware and tuning configuration
+    └── firmware_flight_controller/   Windows flight-control executable (DF飛控.exe)
 ```
 
 ## 4. Getting started (running the Rover)

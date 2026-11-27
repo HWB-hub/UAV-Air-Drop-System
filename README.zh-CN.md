@@ -317,7 +317,7 @@ T:<°C>,P:<hPa>,AX:<g>,AY:<g>,AZ:<g>,GX:<°/s>,GY:<°/s>,GZ:<°/s>,MPU Temp:<°C
 └── fixed_wing_aircraft/       ← 固定翼载机
     ├── cad_models/            机体 CAD / 结构图纸
     ├── docs/                  接线、通道映射等文档
-    └── firmware_flight_controller/   飞控固件与调参配置
+    └── firmware_flight_controller/   Windows 飞控可执行程序（DF飛控.exe）
 ```
 
 ## 4. 快速上手（怎么把卫星车跑起来）

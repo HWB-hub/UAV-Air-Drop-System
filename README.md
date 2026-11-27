@@ -95,6 +95,12 @@ appeared in early drop tests we switched to PETG and raised the infill to 30 % t
   <em>Rover CAD assembly. The physical rover uses off-the-shelf wheels.</em>
 </p>
 
+<p align="center">
+  <img src="rover/cad/rover-open-shell.png" width="860" alt="CAD views of the upper shell and the exposed rover interior">
+  <br>
+  <em>The upper shell is shown separately from the lower shell and onboard electronics.</em>
+</p>
+
 Key points of the printed shell:
 
 * **Two wheel bays** sized to the N20 motor axle spacing, with **ventilation holes** for the motor drivers and the battery.
